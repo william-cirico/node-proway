@@ -40,7 +40,7 @@ try {
 
     // data é um Buffer. portanto precisamos converter para string (formato utf-8) para conseguirmos
     // visualizar o conteúdo do arquivo.
-    console.log(data.toString("utf-8"));
+    const dataEmString = data.toString("utf-8");    
 } catch (error) {
     console.error(error);
 }
@@ -53,6 +53,22 @@ memória a cada 5 segundos em um arquivo chamado log.txt
 
 As informações devem ser salvas no seguinte formato:
 Memória total: xx MB, Memória livre: xx MB, Utilização da memória: xx%
+
+function escreveLogMemoria() {
+    const memoriaTotal = Math.floor(os.totalmem() / 1024 / 1024);
+    const memoriaLivre = Math.floor(os.freemem() / 1024 / 1024);
+    const usoMemoria = Math.floor((memoriaLivre * 100) / memoriaTotal);
+
+    const conteudo = `Memória total: ${memoriaTotal} MB, Memória livre: ${memoriaLivre} MB, Utilização da memória: ${usoMemoria}%`;
+
+    try {
+        fs.appendFileSync(path.resolve("arquivos", "log.txt"), conteudo);
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+setInterval(escreveLogMemoria, 5000);
 
 2. Crie um script que leia o arquivo exercioNomes.txt e mostra todos os nomes que começam com a letra A
 presentes no arquivo.
