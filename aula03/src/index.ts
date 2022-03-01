@@ -1,26 +1,17 @@
-import express, { Request, Response } from "express";
-import { createConnection, getRepository } from "typeorm";
-import { Usuario } from "./entity/Usuario";
+import express from "express";
+import { createConnection } from "typeorm";
+import { errorHandler } from "./middlewares/errorHandler";
+import usuariosRoutes from "./routes/usuariosRoutes";
+import tarefasRoutes from "./routes/tarefasRoutes";
 
 const app = express();
 const PORT = 8080;
 
-createConnection().then(connection => {
-    app.get("/usuarios", async (req: Request, res: Response) => {
-        const usuarios = await getRepository(Usuario).find();
-
-        res.json(usuarios);
-    });
-
-    app.get("/usuarios/:id", async (req: Request, res: Response) => {
-        try {
-            const usuario = await getRepository(Usuario).findOneOrFail(req.params.id);
-
-            res.json(usuario);
-        } catch (error) {
-            res.status(404).json({ error: "Usuário não foi encontrado" });
-        }        
-    });
+createConnection().then(connection => {    
+    app.use(express.json());
+    app.use("/usuarios", usuariosRoutes);  
+    app.use("/tarefas", tarefasRoutes);
+    app.use(errorHandler);   
 });
 
 app.listen(PORT, () => console.log("O servidor está rodando na porta " + PORT));
