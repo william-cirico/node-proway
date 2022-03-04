@@ -58,7 +58,8 @@ export class UsuarioController {
         }        
     }
 
-    static async removeUsuario(req: Request, res: Response, next: NextFunction) {
+
+    static async removeUsuario(req: Request, res: Response, next: NextFunction) {    
         try {
             const usuario = await getRepository(Usuario).findOne(req.params.id);
 
@@ -85,6 +86,18 @@ export class UsuarioController {
             const resultado = await getRepository(Tarefa).save(novaTarefa);
                         
             res.status(201).json(resultado);
+        } catch (error) {
+            next(error);
+        }        
+    }
+
+    static async obterTarefasDoUsuario(req: Request, res: Response, next: NextFunction) {
+        try {
+            const usuario = await getRepository(Usuario).findOne(req.params.id, { relations: ["tarefas"] });            
+            
+            if (!usuario) throw createHttpError(404, "Usuário não foi encontrado");
+
+            res.json(usuario.tarefas);
         } catch (error) {
             next(error);
         }        
